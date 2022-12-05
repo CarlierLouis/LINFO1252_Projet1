@@ -35,7 +35,7 @@ void* philosophe (void* arg)
 int main(int argc, char *argv[])
 {
   if (argc != 2) {
-    printf("Nombre d'arguments insuffisant\n");
+    printf("Nombre d'arguments erroné\n");
     return(EXIT_FAILURE);
   }
 
