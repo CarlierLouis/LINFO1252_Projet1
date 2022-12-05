@@ -4,36 +4,25 @@
 #include <stdbool.h>
 #include <unistd.h>
 
-#define PHILOSOPHES 3
+int nbre_philosophes;
 
-pthread_t phil[PHILOSOPHES];
-pthread_mutex_t baguette[PHILOSOPHES];
+pthread_mutex_t *baguette;
 
-void mange(int id) {
-  printf("Philosophe [%d] mange\n",id);
-  for(int i=0;i< rand(); i++) {
-    // philosophe mange
-  }
-}
+void mange(int id) {}
 
-void* philosophe ( void* arg )
+void* philosophe (void* arg)
 {
   int *id=(int *) arg;
   int left = *id;
-  int right = (left + 1) % PHILOSOPHES;
-  for(int i=0; i<3; i++) {
-    printf("Philosophe [%d] pense\n",*id);
+  int right = (left + 1) % nbre_philosophes;
+  for(int i=0; i<100000; i++) {
     if(left<right) {
       pthread_mutex_lock(&baguette[left]);
-      printf("Philosophe [%d] possède baguette gauche [%d]\n",*id,left);
       pthread_mutex_lock(&baguette[right]);
-      printf("Philosophe [%d] possède baguette droite [%d]\n",*id,right);
     }
     else {
       pthread_mutex_lock(&baguette[right]);
-      printf("Philosophe [%d] possède baguette droite [%d]\n",*id,right);
       pthread_mutex_lock(&baguette[left]);
-      printf("Philosophe [%d] possède baguette gauche [%d]\n",*id,left);
     }
     mange(*id);
     pthread_mutex_unlock(&baguette[left]);
@@ -42,37 +31,45 @@ void* philosophe ( void* arg )
   return (NULL);
 }
 
+// argv[1] = nombre de philosophes
 int main(int argc, char *argv[])
 {
-    int nbre_philosophes;
-    printf("Combien de philosophes ? : \n");
-    scanf("%d", &nbre_philosophes);
+  if (argc != 2) {
+    printf("Nombre d'arguments insuffisant\n");
+    return(EXIT_FAILURE);
+  }
+
+    nbre_philosophes = atoi(argv[1]);
+
+     if (nbre_philosophes < 2) {
+      printf("Nombre de philosophes insuffisant\n");
+      return(EXIT_FAILURE);
+    }
+
+    baguette = malloc(nbre_philosophes*sizeof(pthread_mutex_t));
 
     pthread_t phil[nbre_philosophes];
-    pthread_mutex_t baguette[nbre_philosophes];
 
     long i;
     int id[nbre_philosophes];
 
-    srand(getpid());
-
-    struct parametres {
-        pthread_mutex_t baguette[nbre_philosophes];
-    };
-
-    for (i = 0; i < nbre_philosophes; i++)
+    for (i = 0; i < nbre_philosophes; i++) {
         id[i] = i;
+    }
 
-    for (i = 0; i < nbre_philosophes; i++)
+    for (i = 0; i < nbre_philosophes; i++) {
         pthread_mutex_init(&baguette[i], NULL);
+    }
 
-    for (i = 0; i < nbre_philosophes; i++)
+    for (i = 0; i < nbre_philosophes; i++) {
         pthread_create(&phil[i], NULL, philosophe, (void *)&(id[i]));
+    }
 
-    for (i = 0; i < nbre_philosophes; i++)
+    for (i = 0; i < nbre_philosophes; i++) {
         pthread_join(phil[i], NULL);
+    }
+
+    free(baguette);
 
     return (EXIT_SUCCESS);
 }
-
-// gcc task1_1.c task1_1 && ./task1_1
