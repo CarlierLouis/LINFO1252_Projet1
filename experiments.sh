@@ -4,9 +4,9 @@ echo "Mesure, 1 thread, 2 threads, 4 threads, 8 threads, 16 threads, 32 threads,
 echo "Mesure, 1 thread, 2 threads, 4 threads, 8 threads, 16 threads, 32 threads" > task1/data/task1_2.csv
 echo "Mesure, 1 thread, 2 threads, 4 threads, 8 threads, 16 threads, 32 threads" > task1/data/task1_3.csv
 
-gcc -o task1/task1_1 task1/task1_1.c
-gcc -o task1/task1_2 task1/task1_2.c
-gcc -o task1/task1_3 task1/task1_3.c
+gcc -o task1/task1_1 -lpthread task1/task1_1.c
+gcc -o task1/task1_2 -lpthread task1/task1_2.c
+gcc -o task1/task1_3 -lpthread task1/task1_3.c
 
 for ((i=1;i<=5;i++))
 do
