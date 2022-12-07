@@ -78,6 +78,7 @@ void reader(void)
     }
 }
 
+// argv[1] : Nombre d'écrivains, argv[2] : Nombre de lecteurs
 int main(int argc, char *argv[]) 
 {
     if(argc != 3){
