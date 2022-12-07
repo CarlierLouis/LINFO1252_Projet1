@@ -39,37 +39,37 @@ int main(int argc, char *argv[])
     return(EXIT_FAILURE);
   }
 
-    nbre_philosophes = atoi(argv[1]);
+  nbre_philosophes = atoi(argv[1]);
 
-     if (nbre_philosophes < 2) {
-      printf("Nombre de philosophes insuffisant\n");
-      return(EXIT_FAILURE);
-    }
+  if (nbre_philosophes < 2) {
+  printf("Nombre de philosophes insuffisant\n");
+  return(EXIT_FAILURE);
+  }
 
-    baguette = malloc(nbre_philosophes*sizeof(pthread_mutex_t));
+  baguette = malloc(nbre_philosophes*sizeof(pthread_mutex_t));
 
-    pthread_t phil[nbre_philosophes];
+  pthread_t phil[nbre_philosophes];
 
-    long i;
-    int id[nbre_philosophes];
+  long i;
+  int id[nbre_philosophes];
 
-    for (i = 0; i < nbre_philosophes; i++) {
-        id[i] = i;
-    }
+  for (i = 0; i < nbre_philosophes; i++) {
+      id[i] = i;
+  }
 
-    for (i = 0; i < nbre_philosophes; i++) {
-        pthread_mutex_init(&baguette[i], NULL);
-    }
+  for (i = 0; i < nbre_philosophes; i++) {
+      pthread_mutex_init(&baguette[i], NULL);
+  }
 
-    for (i = 0; i < nbre_philosophes; i++) {
-        pthread_create(&phil[i], NULL, philosophe, (void *)&(id[i]));
-    }
+  for (i = 0; i < nbre_philosophes; i++) {
+      pthread_create(&phil[i], NULL, philosophe, (void *)&(id[i]));
+  }
 
-    for (i = 0; i < nbre_philosophes; i++) {
-        pthread_join(phil[i], NULL);
-    }
+  for (i = 0; i < nbre_philosophes; i++) {
+      pthread_join(phil[i], NULL);
+  }
 
-    free(baguette);
+  free(baguette);
 
-    return (EXIT_SUCCESS);
+  return (EXIT_SUCCESS);
 }
