@@ -4,9 +4,11 @@ echo "Mesure, 1 thread, 2 threads, 4 threads, 8 threads, 16 threads, 32 threads,
 echo "Mesure, 1 thread, 2 threads, 4 threads, 8 threads, 16 threads, 32 threads" > task1/data/task1_2.csv
 echo "Mesure, 1 thread, 2 threads, 4 threads, 8 threads, 16 threads, 32 threads" > task1/data/task1_3.csv
 
-gcc -o task1/task1_1 -lpthread task1/task1_1.c
-gcc -o task1/task1_2 -lpthread task1/task1_2.c
-gcc -o task1/task1_3 -lpthread task1/task1_3.c
+gcc -o task1/task1_1 -lpthread -Wall -Werror task1/task1_1.c
+gcc -o task1/task1_2 -lpthread -Wall -Werror task1/task1_2.c
+gcc -o task1/task1_3 -lpthread -Wall -Werror task1/task1_3.c
+
+DATE='/bin/date'
 
 for ((i=1;i<=5;i++))
 do
@@ -17,32 +19,48 @@ do
     for ((j=0;j<=6;j++))
     do
         exp=$((2**$j))
-        arg=$((exp*2))
+        arg=$(($exp*2))
 
-        time=$(/usr/bin/time -f %e ./task1/task1_1 $arg 2>&1)
+        startTime=$($DATE +'%s%N')
+    
+        ./task1/task1_1 $arg
 
-        philoArray+=($time)
+        endTime=$($DATE +'%s%N')
+
+        totalTime=$(($endTime-$startTime))
+
+        philoArray+=($totalTime)
     done
 
     for ((j=0;j<=5;j++))
     do
         exp=$((2**$j))
-        arg=$((exp*2))
 
-        time=$(/usr/bin/time -f %e ./task1/task1_2 $arg $arg 2>&1)
+        startTime=$($DATE +'%s%N')
 
-        consoproduArray+=($time)
+        ./task1/task1_2 $exp $exp
+
+        endTime=$($DATE +'%s%N')
+
+        totalTime=$(($endTime-$startTime))
+
+        consoproduArray+=($totalTime)
     done    
 
     for ((j=0;j<=5;j++))
     do
         exp=$((2**$j))
-        arg=$((exp*2))
 
-        time=$(/usr/bin/time -f %e ./task1/task1_3 $arg $arg 2>&1)
+        startTime=$($DATE +'%s%N')
 
-        readerwriterArray+=($time)
-    done
+        ./task1/task1_3 $exp $exp
+
+        endTime=$($DATE +'%s%N')
+
+        totalTime=$(($endTime-$startTime))
+
+        readerwriterArray+=($totalTime)
+    done    
 
     echo $i,${philoArray[*]} | tr ' ' ',' >> task1/data/task1_1.csv
     unset philoArray
@@ -54,3 +72,12 @@ do
     unset readerwriterArray
 
 done
+
+echo 'philo :'
+cat task1/data/task1_1.csv
+
+echo 'consoprodu :'
+cat task1/data/task1_2.csv
+
+echo 'readerwriter :'
+cat task1/data/task1_3.csv
