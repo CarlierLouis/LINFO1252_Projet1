@@ -5,11 +5,8 @@
 #include <unistd.h>
 #include <semaphore.h>
 
-
 #define Array_places 8
 int buffer[Array_places];
-int nb_prod;
-int nb_cons;
 
 int index_in = 0;
 int index_out = 0;
@@ -26,7 +23,8 @@ sem_t buffer_full;
 
 int total = 0;
 
-void producer(void){
+void producer(void)
+{
     for(int i=0; i < 8192; i++){
         for (int j=0; j<10000; j++);
         int item = rand();
@@ -39,12 +37,12 @@ void producer(void){
     }
 }
 
-void consumer(void){
+void consumer(void)
+{
     for(int i=0; i < 8192; i++){
         for (int j=0; j<10000; j++);
         sem_wait(&buffer_full);
         pthread_mutex_lock(&mutex);
-        int item = buffer[index_out];
         index_out = (index_out+1)%Array_places;
         pthread_mutex_unlock(&mutex);
         sem_post(&buffer_empty);
@@ -52,13 +50,31 @@ void consumer(void){
 }
 
 // argv[1] : Nombre de consommateurs, argv[2] : Nombre de producteurs
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
+    if (argc != 3) {
+    printf("Nombre d'arguments erroné\n");
+    return(EXIT_FAILURE);
+    }
+
     pthread_t consumers[atoi(argv[1])];
     pthread_t producers[atoi(argv[2])];
 
-    int i;
+    int nbre_consumers = atoi(argv[1]);
+    int nbre_producers = atoi(argv[2]);
+
+    if (nbre_consumers < 1) {
+        printf("Nombre de consomateurs insuffisant\n");
+        return(EXIT_FAILURE);
+    }
+
+    if (nbre_producers < 1) {
+        printf("Nombre de producteurs insuffisant\n");
+        return(EXIT_FAILURE);
+    }
+
     int number[atoi(argv[1])];
-    for(i=1; i<atoi(argv[1]); i++){
+    for(int i=1; i<atoi(argv[1]); i++){
         number[i] = i;
     }
 
